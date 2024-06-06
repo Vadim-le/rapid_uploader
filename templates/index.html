@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Парсинг сервисов с Rapid API</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            color: #333;
+            margin-top: 50px;
+        }
+
+        form {
+            margin-top: 20px;
+        }
+
+        label {
+            font-weight: bold;
+            color: #555;
+        }
+
+        select, input[type="text"], input[type="submit"] {
+            padding: 10px;
+            margin: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 300px;
+            box-sizing: border-box;
+        }
+
+        input[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+        }
+
+        .alert {
+            background-color: #ffcccc;
+            padding: 10px;
+            border: 1px solid #ff0000;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            display: inline-block;
+        }
+
+        .close-btn {
+            cursor: pointer;
+            float: right;
+            margin-top: -10px;
+            margin-right: -10px;
+        }
+
+        textarea {
+            padding: 10px;
+            margin: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 80%;
+            height: 300px;
+            resize: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Парсинг сервисов с Rapid API</h1>
+    <form method="POST" onsubmit="clearTextarea()">
+        <label for="category">Выберите категорию:</label><br>
+        <select id="category" name="category">
+            {% for category in categories %}
+                <option value="{{ category[0] }}">{{ category[1] }}</option>
+            {% endfor %}
+        </select><br><br>
+        <label for="url">Введите URL:</label><br>
+        <input type="text" id="url" name="url"><br><br>
+        <input type="submit" value="Добавить сервис">
+    </form>
+    <br>
+    {% if warning %}
+        <div class="alert">
+            <span class="close-btn" onclick="closeAlert()">x</span>
+            {{ warning }}
+        </div>
+    {% endif %}
+    {% if data %}
+        <h2>Извлеченные данные:</h2>
+        <textarea id="output" readonly>
+            {% for key, value in data.items() %}
+                {{ key }}:
+                Description: {{ value.description }}
+                Required Parameters:
+                {% for param in value.required_parameters %}
+                    - {{ param.param_name }} ({{ param.type }}): {{ param.description }}
+                {% endfor %}
+                Optional Parameters:
+                {% for param in value.Optional_parameters %}
+                    - {{ param.param_name }} ({{ param.type }}): {{ param.description }}
+                {% endfor %}
+            {% endfor %}
+        </textarea>
+    {% endif %}
+
+    <script>
+        // Функция для закрытия предупреждения
+        function closeAlert() {
+            var alertDiv = document.querySelector('.alert');
+            if (alertDiv) {
+                alertDiv.remove();
+            }
+        }
+    </script>
+</body>
+</html>
